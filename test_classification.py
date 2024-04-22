@@ -20,12 +20,12 @@ sys.path.append(os.path.join(ROOT_DIR, 'models'))
 def parse_args():
     '''PARAMETERS'''
     parser = argparse.ArgumentParser('Testing')
-    parser.add_argument('--use_cpu', action='store_true', default=False, help='use cpu mode')
+    parser.add_argument('--use_cpu', action='store_true', default=True, help='use cpu mode')
     parser.add_argument('--gpu', type=str, default='0', help='specify gpu device')
     parser.add_argument('--batch_size', type=int, default=24, help='batch size in training')
     parser.add_argument('--num_category', default=40, type=int, choices=[10, 40],  help='training on ModelNet10/40')
     parser.add_argument('--num_point', type=int, default=1024, help='Point Number')
-    parser.add_argument('--log_dir', type=str, required=True, help='Experiment root')
+    parser.add_argument('--log_dir', type=str, default='2024-04-21_17-38', required=False, help='Experiment root')
     parser.add_argument('--use_normals', action='store_true', default=False, help='use normals')
     parser.add_argument('--use_uniform_sample', action='store_true', default=False, help='use uniform sampiling')
     parser.add_argument('--num_votes', type=int, default=3, help='Aggregate classification scores with voting')
@@ -42,7 +42,7 @@ def test(model, loader, num_class=40, vote_num=1):
             points, target = points.cuda(), target.cuda()
 
         points = points.transpose(2, 1)
-        vote_pool = torch.zeros(target.size()[0], num_class).cuda()
+        vote_pool = torch.zeros(target.size()[0], num_class)
 
         for _ in range(vote_num):
             pred, _ = classifier(points)
